@@ -11,4 +11,5 @@ public interface IUserRepository {
     public Task<UserModel> UpdateAsync(UserModel user, CancellationToken cancellationToken);
 
 
+
 }
