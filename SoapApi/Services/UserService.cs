@@ -41,5 +41,31 @@ public class UserService : IUserContract {
         throw new FaultException("No records with that email found");
     }
 
+    public async Task<bool> DeleteUserById(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
 
+        if (user is null) {
+            throw new FaultException("User not found");
+        }
+
+        await _userRepository.DeleteByIdAsync(user, cancellationToken);
+
+        return true;
+    }
+
+    public async Task<UserResponseDto> CreateUser(UserCreateRequestDto userRequest, CancellationToken cancellationToken) {
+        var user = userRequest.ToModel();
+
+        var createdUser = await _userRepository.CreateAsync(user, cancellationToken);
+        return createdUser.ToDto();
+    }
+
+    public async Task<UserResponseDto> UpdateUser(UserUpdateRequestDto userUpdateRequest, CancellationToken cancellationToken)
+    {
+        var user = userUpdateRequest.ToModel();
+
+        var updatedUser = await _userRepository.UpdateAsync(user, cancellationToken);
+        return updatedUser.ToDto();
+    }
 }
