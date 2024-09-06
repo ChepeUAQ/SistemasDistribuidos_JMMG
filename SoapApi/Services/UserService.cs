@@ -68,4 +68,5 @@ public class UserService : IUserContract {
         var updatedUser = await _userRepository.UpdateAsync(user, cancellationToken);
         return updatedUser.ToDto();
     }
+
 }

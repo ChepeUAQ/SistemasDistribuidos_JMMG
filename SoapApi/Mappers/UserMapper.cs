@@ -64,4 +64,5 @@ public static class UserMapper {
     // public static IEnumerable<UserResponseDto> ToDto(this IEnumerable<UserModel> user) {
     //     return user.Select(s => s.ToDto()).ToList();
     // }
+
 }
