@@ -26,4 +26,5 @@ public interface IUserContract {
     //FirstName
     //BirthDay
     //UserId
+
 }
