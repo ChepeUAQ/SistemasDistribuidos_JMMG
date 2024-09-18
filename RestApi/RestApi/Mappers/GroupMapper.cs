@@ -25,4 +25,5 @@ public static class GroupMapper {
             CreationDate = group.CreatedAt
         };
     }
+
 }
