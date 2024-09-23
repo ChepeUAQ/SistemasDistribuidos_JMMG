@@ -26,4 +26,15 @@ public class GroupService : IGroupService
             CreationDate = group.CreationDate
         };
     }
+
+    public async Task<IList<GroupUserModel>> GetGroupByNameAsync(string name, CancellationToken cancellationToken)
+    {
+        var groups = await _groupRepository.GetByNameAsync(name, cancellationToken);
+
+        return groups.Select(group => new GroupUserModel {
+            Id = group.Id,
+            Name = group.Name,
+            CreationDate = group.CreationDate
+        }).ToList();
+    }
 }

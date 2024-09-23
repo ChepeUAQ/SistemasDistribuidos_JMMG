@@ -26,4 +26,16 @@ public class GroupsController : ControllerBase {
         return Ok(group.ToDto());
     }
 
+//localhost/gorups?name=fjsisjefiesjfij&date=2202023303&var3=2jlisjfs
+    [HttpGet]
+    public async Task<ActionResult<List<GroupResponse>>> GetGroupByName([FromQuery] string name, CancellationToken cancellationToken) {
+        var groups = await _groupService.GetGroupByNameAsync(name, cancellationToken);
+
+        if (groups is null) {
+            return NotFound();
+        }
+
+        return Ok(groups.Select(group => group.ToDto()).ToList());
+    }
+
 }
