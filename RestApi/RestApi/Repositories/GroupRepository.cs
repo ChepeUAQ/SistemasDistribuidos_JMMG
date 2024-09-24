@@ -1,4 +1,5 @@
 using MongoDB.Bson;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using RestApi.Infrastructure.Mongo;
 using RestApi.Mappers;
@@ -14,6 +15,7 @@ public class GroupRepository : IGroupRepository
         var database = mongoClient.GetDatabase(configuration.GetValue<string>("MongoDb:Groups:DatabaseName"));
         _groups = database.GetCollection<GroupEntity>(configuration.GetValue<string>("MongoDb:Groups:CollectionName"));
     }
+    
     
     public async Task<GroupModel> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
