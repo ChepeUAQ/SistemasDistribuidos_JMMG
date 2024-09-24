@@ -1,5 +1,4 @@
 using MongoDB.Driver;
-using RestApi.GroupService;
 using RestApi.Repositories;
 using RestApi.Services;
 
@@ -15,6 +14,7 @@ builder.Services.AddSingleton<IMongoClient, MongoClient>(s => new MongoClient(bu
 // Scoped, Transient, Singleton (Inyeccion de dependencia)
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 

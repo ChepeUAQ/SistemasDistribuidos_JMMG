@@ -27,10 +27,15 @@ public class GroupRepository : IGroupRepository
         }
     }
 
-    public async Task<IList<GroupModel>> GetByNameAsync(string name, CancellationToken cancellationToken)
+    public async Task<IList<GroupModel>> GetByNameAsync(string name, int pages, int pageSize, string orderBy, CancellationToken cancellationToken)
     {
             var filter = Builders<GroupEntity>.Filter.Regex(x => x.Name, new BsonRegularExpression(name, "i"));
-            var groups = await _groups.Find(filter).ToListAsync(cancellationToken);
+
+            var query = _groups.Find(filter).Sort(orderBy == "CreatedAt" ? Builders<GroupEntity>.Sort.Descending(e => e.CreatedAt) :
+                Builders<GroupEntity>.Sort.Ascending(e => e.Name)
+            ).Skip((pages - 1) * pageSize).Limit(pageSize);
+
+            var groups = await query.ToListAsync(cancellationToken);
 
             return groups.Select(group => group.ToModel()).ToList();
     }
