@@ -18,6 +18,7 @@ public class UserRepository : IUserRepository {
 
         _userContract = new ChannelFactory<IUserContract>(binding, endpoint).CreateChannel();
     }
+    
     public async Task<UserModel> GetByIdAsync(Guid userId, CancellationToken cancellationToken) {
         try {
             var user = await _userContract.GetUserById(userId, cancellationToken);
