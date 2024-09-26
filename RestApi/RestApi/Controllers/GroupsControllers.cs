@@ -29,7 +29,7 @@ public class GroupsController : ControllerBase {
     }
 
 //localhost/gorups?name=fjsisjefiesjfij&date=2202023303&var3=2jlisjfs
-    [HttpGet("like-name")]
+    [HttpGet]
     public async Task<ActionResult<List<GroupResponse>>> GetGroupByName([FromQuery] string name, [FromQuery] int pages, [FromQuery] int pageSize, [FromQuery] string orderBy, CancellationToken cancellationToken) {
         var groups = await _groupService.GetGroupByNameAsync(name, pages, pageSize, orderBy, cancellationToken);
 
@@ -38,17 +38,6 @@ public class GroupsController : ControllerBase {
         }
 
         return Ok(groups.Select(group => group.ToDto()).ToList());
-    }
-
-    [HttpGet("exact-name")]
-    public async Task<ActionResult<GroupResponse>> GetGroupByExactName(string name, CancellationToken cancellationToken) {
-        var group = await _groupService.GetGroupByExactNameAsync(name, cancellationToken);
-
-        if (group is null) {
-            return NotFound();
-        }
-
-        return Ok(group.ToDto());
     }
 
     [HttpDelete("{id}")]
