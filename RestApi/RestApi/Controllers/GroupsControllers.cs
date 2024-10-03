@@ -19,25 +19,27 @@ public class GroupsController : ControllerBase {
     // localhost:port/groups/28728723
     [HttpGet("{id}")]
     public async Task<ActionResult<GroupResponse>> GetGroupById(string id, CancellationToken cancellationToken) {
-        var group = await _groupService.GetGroupByIdAsync(id, cancellationToken);
-
-        if (group is null) {
+        try
+        {
+            var group = await _groupService.GetGroupByIdAsync(id, cancellationToken);
+            return Ok(group.ToDto());
+        }
+        catch (GroupNotFoundException)
+        {
             return NotFound();
         }
-
-        return Ok(group.ToDto());
     }
 
 //localhost/gorups?name=fjsisjefiesjfij&date=2202023303&var3=2jlisjfs
     [HttpGet]
     public async Task<ActionResult<List<GroupResponse>>> GetGroupByName([FromQuery] string name, [FromQuery] int pages, [FromQuery] int pageSize, [FromQuery] string orderBy, CancellationToken cancellationToken) {
-        var groups = await _groupService.GetGroupByNameAsync(name, pages, pageSize, orderBy, cancellationToken);
-
-        if (groups is null) {
+        try {
+            var groups = await _groupService.GetGroupByNameAsync(name, pages, pageSize, orderBy, cancellationToken);
+            return Ok(groups.Select(group => group.ToDto()).ToList());
+        } catch (GroupNotFoundException) {
             return NotFound();
         }
 
-        return Ok(groups.Select(group => group.ToDto()).ToList());
     }
 
     [HttpDelete("{id}")]
@@ -57,6 +59,43 @@ public class GroupsController : ControllerBase {
             var group = await _groupService.CreateGroupAsync(groupRequest.Name, groupRequest.Users, cancellationToken);
             return CreatedAtAction(nameof(GetGroupById), new {id = group.Id}, group.ToDto());
         }
+        catch(UserNotFoundException)
+        {
+            return NotFound(NewValidationProblemDetails("Error", HttpStatusCode.NotFound, new Dictionary<string, string[]>{
+                {"Users", ["User not found"]}
+            }));
+        }
+        catch (InvalidGroupRequestFormatException)
+        {
+            return BadRequest(NewValidationProblemDetails("Error", HttpStatusCode.BadRequest, new Dictionary<string, string[]>{
+                {"Groups", ["User array is empty"]}
+            }));
+        }
+        catch (GroupAlreadyExistsException) 
+        {
+            return Conflict(NewValidationProblemDetails("Error", HttpStatusCode.Conflict, new Dictionary<string, string[]>{
+                {"Groups", ["Group with same name already exists"]}
+            }));
+        }
+    }
+
+    // localhost:8080/groups/sioaud90
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateGroup(string id, [FromBody] UpdateGroupRequest groupRequest, CancellationToken cancellationToken) {
+        try
+        {
+            await _groupService.UpdateGroupAsync(id, groupRequest.Name, groupRequest.Users, cancellationToken);
+            return NoContent();
+        }
+        catch (UserNotFoundException) {
+            return NotFound(NewValidationProblemDetails("Error", HttpStatusCode.NotFound, new Dictionary<string, string[]>{
+                {"Users", ["User not found"]}
+            }));
+        }
+        catch (GroupNotFoundException)
+        {
+            return NotFound();
+        }
         catch (InvalidGroupRequestFormatException)
         {
             return BadRequest(NewValidationProblemDetails("La cagaste we", HttpStatusCode.BadRequest, new Dictionary<string, string[]>{
@@ -70,6 +109,7 @@ public class GroupsController : ControllerBase {
             }));
         }
     }
+
 
     private static ValidationProblemDetails NewValidationProblemDetails(string title, HttpStatusCode statusCode, Dictionary<string, string[]> errors) {
         return new ValidationProblemDetails {
