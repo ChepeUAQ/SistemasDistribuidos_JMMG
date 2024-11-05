@@ -73,4 +73,15 @@ public class GroupRepository : IGroupRepository
 
         return group.ToModel();
     }
+
+    public async Task UpdateGroupAsync(string id, string name, Guid[] users, CancellationToken cancellationToken)
+    {
+        var filter = Builders<GroupEntity>.Filter.Eq(x => x.Id, id);
+
+        var update = Builders<GroupEntity>.Update.
+        Set(s => s.Name, name).
+        Set(s => s.Users, users);
+
+        await _groups.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+    }
 }
