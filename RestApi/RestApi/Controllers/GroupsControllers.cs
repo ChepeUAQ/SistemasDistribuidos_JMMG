@@ -11,7 +11,6 @@ namespace RestApi.Controllers;
 
 [ApiController]
 [Authorize]
-[Authorize]
 [Route("[controller]")]
 public class GroupsController : ControllerBase {
     private readonly IGroupService _groupService;
@@ -24,14 +23,7 @@ public class GroupsController : ControllerBase {
     [HttpGet("{id}")]
     [Authorize(Policy = "Read")]
     public async Task<ActionResult<GroupResponse>> GetGroupById(string id, CancellationToken cancellationToken) {
-        try
-        {
-            var group = await _groupService.GetGroupByIdAsync(id, cancellationToken);
-            return Ok(group.ToDto());
-        }
-        catch (GroupNotFoundException)
-        {
-        try
+         try
         {
             var group = await _groupService.GetGroupByIdAsync(id, cancellationToken);
             return Ok(group.ToDto());
@@ -46,11 +38,7 @@ public class GroupsController : ControllerBase {
     [HttpGet]
     [Authorize(Policy = "Read")]
     public async Task<ActionResult<List<GroupResponse>>> GetGroupByName([FromQuery] string name, [FromQuery] int pages, [FromQuery] int pageSize, [FromQuery] string orderBy, CancellationToken cancellationToken) {
-        try {
-            var groups = await _groupService.GetGroupByNameAsync(name, pages, pageSize, orderBy, cancellationToken);
-            return Ok(groups.Select(group => group.ToDto()).ToList());
-        } catch (GroupNotFoundException) {
-        try {
+         try {
             var groups = await _groupService.GetGroupByNameAsync(name, pages, pageSize, orderBy, cancellationToken);
             return Ok(groups.Select(group => group.ToDto()).ToList());
         } catch (GroupNotFoundException) {
