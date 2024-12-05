@@ -4,7 +4,7 @@ metadata:
   name: groups-api-svc
   namespace: backend-api
 spec:
-  type: LoadBalancer
+  type: LoadBalancer # ClusterIP NodePort LoadBalancer
   ports: 
     - port: 8083
       targetPort: 8083

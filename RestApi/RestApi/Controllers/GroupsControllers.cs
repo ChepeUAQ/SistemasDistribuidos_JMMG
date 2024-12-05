@@ -5,6 +5,7 @@ using RestApi.Mappers;
 using RestApi.Services;
 using RestApi.Exceptions;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RestApi.Controllers;
 
@@ -20,8 +21,9 @@ public class GroupsController : ControllerBase {
 
     // localhost:port/groups/28728723
     [HttpGet("{id}")]
+    [Authorize(Policy = "Read")]
     public async Task<ActionResult<GroupResponse>> GetGroupById(string id, CancellationToken cancellationToken) {
-        try
+         try
         {
             var group = await _groupService.GetGroupByIdAsync(id, cancellationToken);
             return Ok(group.ToDto());
@@ -34,8 +36,9 @@ public class GroupsController : ControllerBase {
 
 //localhost/gorups?name=fjsisjefiesjfij&date=2202023303&var3=2jlisjfs
     [HttpGet]
+    [Authorize(Policy = "Read")]
     public async Task<ActionResult<List<GroupResponse>>> GetGroupByName([FromQuery] string name, [FromQuery] int pages, [FromQuery] int pageSize, [FromQuery] string orderBy, CancellationToken cancellationToken) {
-        try {
+         try {
             var groups = await _groupService.GetGroupByNameAsync(name, pages, pageSize, orderBy, cancellationToken);
             return Ok(groups.Select(group => group.ToDto()).ToList());
         } catch (GroupNotFoundException) {
@@ -45,6 +48,7 @@ public class GroupsController : ControllerBase {
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = "Write")]
     public async Task<ActionResult> DeleteGroup(string id, CancellationToken cancellationToken) {
         try {
             await _groupService.DeleteGroupByIdAsync(id, cancellationToken);
@@ -55,6 +59,7 @@ public class GroupsController : ControllerBase {
     }
 
     [HttpPost]
+    [Authorize(Policy = "Write")]
     public async Task<ActionResult<GroupResponse>> CreateGroup([FromBody] CreateGroupRequest groupRequest, CancellationToken cancellationToken) {
         try
         {
@@ -83,6 +88,7 @@ public class GroupsController : ControllerBase {
 
     // localhost:8080/groups/sioaud90
     [HttpPut("{id}")]
+    [Authorize(Policy = "Write")]
     public async Task<IActionResult> UpdateGroup(string id, [FromBody] UpdateGroupRequest groupRequest, CancellationToken cancellationToken) {
         try
         {
