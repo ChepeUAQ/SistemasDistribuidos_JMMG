@@ -20,7 +20,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IMongoClient, MongoClient>(s => new MongoClient(builder.Configuration.GetValue<string>("MongoDb:Groups:ConnectionString")));
 
 
-//Scoped, Transient, Singleton (revisar inyección de dependencias)
 
 //Scoped, Transient, Singleton (revisar inyección de dependencias)
 builder.Services.AddScoped<IGroupService, GroupService>();
@@ -57,9 +56,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.UseAuthentication();
 app.UseAuthorization();
