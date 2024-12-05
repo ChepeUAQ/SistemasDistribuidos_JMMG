@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using RestApi.Dtos;
 using RestApi.Mappers;
 using RestApi.Services;
@@ -8,6 +9,7 @@ using System.Net;
 namespace RestApi.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class GroupsController : ControllerBase {
     private readonly IGroupService _groupService;
