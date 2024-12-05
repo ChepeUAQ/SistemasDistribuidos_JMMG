@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using RestApi.Dtos;
 using RestApi.Mappers;
 using RestApi.Services;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace RestApi.Controllers;
 
 [ApiController]
+[Authorize]
 [Authorize]
 [Route("[controller]")]
 public class GroupsController : ControllerBase {
@@ -29,6 +31,13 @@ public class GroupsController : ControllerBase {
         }
         catch (GroupNotFoundException)
         {
+        try
+        {
+            var group = await _groupService.GetGroupByIdAsync(id, cancellationToken);
+            return Ok(group.ToDto());
+        }
+        catch (GroupNotFoundException)
+        {
             return NotFound();
         }
     }
@@ -37,6 +46,10 @@ public class GroupsController : ControllerBase {
     [HttpGet]
     [Authorize(Policy = "Read")]
     public async Task<ActionResult<List<GroupResponse>>> GetGroupByName([FromQuery] string name, [FromQuery] int pages, [FromQuery] int pageSize, [FromQuery] string orderBy, CancellationToken cancellationToken) {
+        try {
+            var groups = await _groupService.GetGroupByNameAsync(name, pages, pageSize, orderBy, cancellationToken);
+            return Ok(groups.Select(group => group.ToDto()).ToList());
+        } catch (GroupNotFoundException) {
         try {
             var groups = await _groupService.GetGroupByNameAsync(name, pages, pageSize, orderBy, cancellationToken);
             return Ok(groups.Select(group => group.ToDto()).ToList());
